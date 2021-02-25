@@ -28,7 +28,7 @@ const inputParser = (rawInput: string): Input => {
     const c = carStr.split(' ')
     return {
       P: +c[0],
-      streetNames: c.slice(1, +c[0]),
+      streetNames: c.slice(1),
     }
   })
 

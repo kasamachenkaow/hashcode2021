@@ -4,14 +4,18 @@ import common from '../common'
 const whichStreetGreen = (outputIntersection: Output[number], Ti: number) => {
   let currentT = 0
   let scheduleI = 0
-  while (currentT < Ti) {
+
+  while (currentT <= Ti) {
     currentT += outputIntersection.schedule[scheduleI].duration
 
-    scheduleI++
-    if (scheduleI >= outputIntersection.schedule.length) {
-      scheduleI = 0
+    if (currentT <= Ti) {
+      scheduleI++;
+      if (scheduleI >= outputIntersection.schedule.length) {
+        scheduleI = 0;
+      }
     }
   }
+
   return outputIntersection.schedule[scheduleI].streetName
 }
 
@@ -28,8 +32,6 @@ const debug = (input: Input, output: Output): number => {
     timeOnStreet: input.D,
   }))
 
-  common.inspect({ carsRunning })
-
   const streetsState: Record<StreetName, {
     carsQueue: Array<{
       carId: number // id of the car waiting
@@ -40,33 +42,18 @@ const debug = (input: Input, output: Output): number => {
     [streetName]: { carsQueue: [] }
   }), {})
 
-  common.inspect({ streetsState })
-
   for (let Ti = 0; Ti <= input.D; Ti++) {
     common.inspect({ Ti })
 
-    // run cars and finish them
-    carsRunning = carsRunning.filter(carRunning => {
-      const car = input.cars[carRunning.carId]
-      const currentStreet = input.streets[carRunning.currentCarStreetId]
-
-      if (carRunning.currentCarStreetId >= car.P && carRunning.timeOnStreet >= currentStreet.L) {
-        // finish car
-        common.inspect(`Finishing car ${carRunning.carId}`)
-        score += input.F + (input.D - Ti)
-        return false
-      }
-
-      carRunning.timeOnStreet++;
-      return true
-    })
+    // run cars
+    carsRunning.forEach(carRunning => carRunning.timeOnStreet++)
 
     // put cars at intersection queue
     carsRunning = carsRunning.filter(carRunning => {
       const currentStreetName = input.cars[carRunning.carId].streetNames[carRunning.currentCarStreetId]
       const currentStreet = input.streets[currentStreetName]
       if (carRunning.timeOnStreet >= currentStreet.L) {
-        common.inspect(`Car ${carRunning.carId} waits at intersection ${currentStreet.E}`)
+        common.inspect(`⏰ Car ${carRunning.carId} waits at intersection ${currentStreet.E}`)
         streetsState[currentStreetName].carsQueue.push({
           carId: carRunning.carId,
           nextCarStreetId: carRunning.currentCarStreetId + 1,
@@ -80,16 +67,27 @@ const debug = (input: Input, output: Output): number => {
     // let cars through for each intersection of output
     for (const outputIntersection of output) {
       const currentGreen = whichStreetGreen(outputIntersection, Ti)
+      common.inspect(`🚦 Current green street is ${currentGreen}`)
       const carLetThrough = streetsState[currentGreen].carsQueue.pop()
       if (carLetThrough) {
-        common.inspect(`Car ${carLetThrough.carId} let through on street ${carLetThrough.nextCarStreetId}`)
-        carsRunning.push({
-          carId: carLetThrough.carId,
-          timeOnStreet: 0,
-          currentCarStreetId: carLetThrough.nextCarStreetId,
-        })
+        common.inspect(`✅ Car ${carLetThrough.carId} let through on street ${carLetThrough.nextCarStreetId} (${input.cars[carLetThrough.carId].streetNames[carLetThrough.nextCarStreetId]})`)
+
+        const nextCarStreet = input.cars[carLetThrough.carId].streetNames[carLetThrough.nextCarStreetId]
+        if (nextCarStreet) {
+          carsRunning.push({
+            carId: carLetThrough.carId,
+            timeOnStreet: 0,
+            currentCarStreetId: carLetThrough.nextCarStreetId,
+          })
+        } else {
+          // finish car
+          common.inspect(`🏁 Finishing car ${carLetThrough.carId}`)
+          score += input.F + (input.D - Ti)
+        }
       }
     }
+
+    common.inspect({ carsRunning, streetsState })
   }
 
   return score
