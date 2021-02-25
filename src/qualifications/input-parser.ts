@@ -38,7 +38,7 @@ const inputParser = (rawInput: string): Input => {
     intersections[street.B].out.push(streetName)
 
     if (!intersections[street.E]) intersections[street.E] = { in: [], out: [] }
-    intersections[street.E].out.push(streetName)
+    intersections[street.E].in.push(streetName)
   })
 
 

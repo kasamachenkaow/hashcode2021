@@ -1,3 +1,3 @@
 #!/bin/sh
 
-npx ts-node ./src/$1/index.ts
+npx ts-node ./src/qualifications/index.ts ./src/qualifications/input/a.txt

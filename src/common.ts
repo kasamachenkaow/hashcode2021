@@ -18,8 +18,8 @@ console.log(process.execPath)
 const { readFileSync, writeFileSync } = require('fs')
 
 const run = (f: Func<string, string>, name: string) => {
-  const file = process.argv[2].split('input/')[1].split('.in')[0]
-  const IN_FILE = path.join(`./src/${name}/input/${file}.in`)
+  const file = process.argv[2].split('input/')[1].split('.txt')[0]
+  const IN_FILE = path.join(`./src/${name}/input/${file}.txt`)
   const OUT_FILE = path.join(`./src/${name}/output/${file}.out`)
   const input = readFileSync(IN_FILE).toString()
   console.log(`running -> ${file}`)
