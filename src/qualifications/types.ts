@@ -16,15 +16,17 @@ export type Intersection = {
   out: StreetName[] // streets going out
 }
 
+export type StreetList = {
+  [name: string]: Street
+}
+
 export type Input = {
   D: number // duration of simulation
   I: number // number of intersections
   S: number // number of streets
   V: number // number of cars
   F: number // bonus points
-  streets: {
-    [name: string]: Street
-  }
+  streets: StreetList
   cars: Car[]
   intersections: Intersection[]
 }
