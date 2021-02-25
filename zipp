@@ -1,0 +1,3 @@
+#!/bin/sh
+
+zip ./$1 ./src/$1 ./src/common.ts ./src/types.ts
