@@ -1,5 +1,5 @@
 import common from '../common'
-import { Input, Pizza } from './types'
+import { Pizza } from './types'
 
 
 type Delivery = {
