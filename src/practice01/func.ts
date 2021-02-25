@@ -1,7 +1,6 @@
 import common from '../common'
 import { Pizza } from './types'
 
-
 type Delivery = {
   [key: number]: {
     orders: number

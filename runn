@@ -1,0 +1,6 @@
+#!/bin/sh
+
+for file in ./src/$1/input/*
+do
+  yarn ts-node ./src/$1/index.ts "$file" &
+done
